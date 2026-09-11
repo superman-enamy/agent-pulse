@@ -43,7 +43,7 @@ Running AI coding assistants like **Google Antigravity (`agy`)** or **Claude Cod
 Open **Termux** and run:
 
 ```bash
-git clone https://github.com/your-username/agent-pulse.git ~/.agent-pulse
+git clone https://github.com/superman-enamy/agent-pulse.git ~/.agent-pulse
 cd ~/.agent-pulse
 ./install.sh
 ```
