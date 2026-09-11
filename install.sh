@@ -112,7 +112,13 @@ if [ -d "$CLAUDE_DIR" ] && [ -f "$CLAUDE_DIR/settings.json" ]; then
     echo "   ✅ Claude Code hooks configured successfully."
 fi
 
-# 8. Start Service
+# 8. Install Agent Skill for AI Coding Assistants
+echo "🧠 Installing Agent-Pulse Skill..."
+mkdir -p "$HOME/.agents/skills/agent-pulse"
+cp -f "$TARGET_DIR/skills/agent-pulse/SKILL.md" "$HOME/.agents/skills/agent-pulse/" 2>/dev/null || true
+echo "   ✅ Agent skill installed at ~/.agents/skills/agent-pulse/SKILL.md"
+
+# 9. Start Service
 echo "🚀 Starting Agent-Pulse Dashboard..."
 "$TARGET_DIR/start.sh"
 

@@ -51,8 +51,22 @@ cd ~/.agent-pulse
 The installer automatically:
 1. Verifies required packages (`python`, `jq`, `termux-api`).
 2. Configures hooks for **Antigravity** (`~/.gemini/config/hooks.json`) and **Claude** (`~/.claude/settings.json`).
-3. Installs the `agent-pulse` command into `$PREFIX/bin`.
-4. Starts the local Web Portal daemon on port `8899`.
+3. Installs the bundled **AI Agent Skill** into `~/.agents/skills/agent-pulse/`.
+4. Installs the `agent-pulse` command into `$PREFIX/bin`.
+5. Starts the local Web Portal daemon on port `8899`.
+
+---
+
+## 🧠 AI Agent Skill Setup
+
+Agent-Pulse includes an agent skill (`skills/agent-pulse/SKILL.md`) that allows **Google Antigravity**, **Claude Code**, or **Codex** to install, configure, and operate Agent-Pulse completely on their own!
+
+### Direct Agent Setup:
+If you are already inside an AI agent session in Termux, just tell your agent:
+> *"Setup Agent-Pulse from https://github.com/superman-enamy/agent-pulse"*
+> or *"Activate agent-pulse skill and verify my notifications"*
+
+The agent will automatically read the skill, verify dependencies, configure the hooks, and start the dashboard for you!
 
 ---
 
