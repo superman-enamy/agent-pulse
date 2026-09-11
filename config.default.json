@@ -1,0 +1,39 @@
+{
+  "server": {
+    "port": 8899,
+    "host": "127.0.0.1"
+  },
+  "automation": {
+    "auto_open_on_permission": true,
+    "auto_open_on_complete": true,
+    "only_open_when_background": true
+  },
+  "smart_dnd": {
+    "enabled": true,
+    "silent_toast_in_termux": true
+  },
+  "tts": {
+    "enabled": true,
+    "rate": 1,
+    "pitch": 1,
+    "permission_text": "Antigravity in {session} is waiting for permission",
+    "complete_text": "Antigravity task completed in {session}",
+    "error_text": "Antigravity in {session} stopped with an error"
+  },
+  "notification": {
+    "sound": true,
+    "vibrate": true,
+    "vibrate_pattern_complete": "100,100,100",
+    "vibrate_pattern_permission": "300,150,300,150,300",
+    "led": true,
+    "led_color_complete": "00FF00",
+    "led_color_permission": "FFCC00",
+    "led_color_error": "FF0000",
+    "terminal_banner": false
+  },
+  "templates": {
+    "title_complete": "AGY [{session}: {folder}] - Task Completed \u2705",
+    "title_permission": "AGY [{session}: {folder}] - Permission Required \ud83d\udd12",
+    "title_error": "AGY [{session}: {folder}] - Error \u203c\ufe0f"
+  }
+}

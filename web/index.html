@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agent-Pulse Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="pulse-indicator"></div>
+        <div>
+          <h1>Agent-Pulse</h1>
+          <span class="subtext">Termux Automation Hub</span>
+        </div>
+      </div>
+      <div class="status-badge" id="fg-badge">
+        <span class="dot"></span> <span id="fg-text">Checking...</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="automation">⚡ Automation</button>
+      <button class="tab-btn" data-tab="voice">🎙️ Voice TTS</button>
+      <button class="tab-btn" data-tab="notifications">🔔 Alerts</button>
+      <button class="tab-btn" data-tab="tester">🧪 Test & Logs</button>
+    </nav>
+
+    <!-- Content Sections -->
+    <main class="content">
+      <!-- Tab 1: Automation & DND -->
+      <section id="tab-automation" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <h3>Smart Foreground Detection</h3>
+            <p>Silence alerts when you are actively inside Termux.</p>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Smart DND (Mute in Termux)</div>
+              <div class="setting-desc">Suppress sound & voice if Termux is on-screen</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="smart_dnd_enabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Silent Toast Alert</div>
+              <div class="setting-desc">Show a subtle screen toast instead of full alert</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="smart_dnd_toast">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Auto-Open Termux App</h3>
+            <p>Automatically launch Termux to the foreground.</p>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Auto-Open on Permission / Question</div>
+              <div class="setting-desc">Pops up Termux instantly when input is needed</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto_open_permission">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Auto-Open on Task Completed</div>
+              <div class="setting-desc">Pops up Termux when agent completes turn</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto_open_complete">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Voice TTS Studio -->
+      <section id="tab-voice" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Text-to-Speech Engine</h3>
+            <p>Spoken announcements over device speaker.</p>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Enable Voice TTS</div>
+              <div class="setting-desc">Speak alerts aloud using Termux TTS</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="tts_enabled">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Speech Rate (Speed)</span>
+              <span class="slider-value" id="rate-val">1.0x</span>
+            </div>
+            <input type="range" id="tts_rate" min="0.5" max="2.0" step="0.1" value="1.0">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span>Voice Pitch</span>
+              <span class="slider-value" id="pitch-val">1.0x</span>
+            </div>
+            <input type="range" id="tts_pitch" min="0.5" max="1.5" step="0.1" value="1.0">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Voice Text Templates</h3>
+            <p>Tags available: <code>{session}</code>, <code>{folder}</code>, <code>{tool}</code></p>
+          </div>
+          <div class="input-group">
+            <label>Permission Request Speech</label>
+            <input type="text" id="tts_permission_text" class="text-input">
+          </div>
+          <div class="input-group">
+            <label>Task Completed Speech</label>
+            <input type="text" id="tts_complete_text" class="text-input">
+          </div>
+          <div class="input-group">
+            <label>Error Alert Speech</label>
+            <input type="text" id="tts_error_text" class="text-input">
+          </div>
+          <button class="btn btn-secondary" id="btn-test-voice">▶️ Test Voice Sample</button>
+        </div>
+      </section>
+
+      <!-- Tab 3: Alerts & Styling -->
+      <section id="tab-notifications" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Alert Channels</h3>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Sound Chime</div>
+              <div class="setting-desc">Play notification sound</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif_sound">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Haptic Vibration</div>
+              <div class="setting-desc">Vibrate phone on incoming alert</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif_vibrate">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">LED Light Blink</div>
+              <div class="setting-desc">Pulse device LED light</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif_led">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">In-Terminal Screen Badge</div>
+              <div class="setting-desc">Print colored status alert directly in terminal screen</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notif_terminal_banner">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Notification Title Templates</h3>
+          </div>
+          <div class="input-group">
+            <label>Task Completed Title</label>
+            <input type="text" id="tpl_title_complete" class="text-input">
+          </div>
+          <div class="input-group">
+            <label>Permission Required Title</label>
+            <input type="text" id="tpl_title_permission" class="text-input">
+          </div>
+          <div class="input-group">
+            <label>Error Title</label>
+            <input type="text" id="tpl_title_error" class="text-input">
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Tester & Logs -->
+      <section id="tab-tester" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h3>Live Test Suite</h3>
+            <p>Test current settings directly on your device.</p>
+          </div>
+          <div class="btn-grid">
+            <button class="btn btn-primary" id="btn-test-notif-complete">🔔 Test Complete Alert</button>
+            <button class="btn btn-warning" id="btn-test-notif-perm">🔒 Test Permission Alert</button>
+            <button class="btn btn-secondary" id="btn-test-open">🚀 Test Open Termux</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header flex-between">
+            <div>
+              <h3>Recent Event Activity</h3>
+              <p>Live history of alerts and triggers.</p>
+            </div>
+            <button class="btn-small" id="btn-refresh-logs">🔄 Refresh</button>
+          </div>
+          <div class="log-viewer" id="log-viewer">
+            <div class="log-empty">Loading activity log...</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Save Bar Floating Bottom -->
+    <div class="save-bar">
+      <div id="save-status" class="save-status">All changes saved</div>
+      <button class="btn btn-primary" id="btn-save">💾 Save Changes</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
