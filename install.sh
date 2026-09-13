@@ -129,19 +129,7 @@ mkdir -p "$HOME/.agents/skills/agent-pulse"
 cp -f "$TARGET_DIR/skills/agent-pulse/SKILL.md" "$HOME/.agents/skills/agent-pulse/" 2>/dev/null || true
 echo "   ✅ Agent skill installed at ~/.agents/skills/agent-pulse/SKILL.md"
 
-# 9. Configure keep-alive in ~/.bashrc
-if [ -f "$HOME/.bashrc" ] && ! grep -q "agent-pulse/start.sh" "$HOME/.bashrc"; then
-    cat << 'BASHRC_HOOK' >> "$HOME/.bashrc"
-
-# >>> agent-pulse keep-alive >>>
-if ! curl -s -m 0.2 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
-    [ -x "$HOME/.agent-pulse/start.sh" ] && "$HOME/.agent-pulse/start.sh" >/dev/null 2>&1 &
-fi
-# <<< agent-pulse keep-alive <<<
-BASHRC_HOOK
-fi
-
-# 10. Start Service
+# 9. Start Service
 echo "🚀 Starting Agent-Pulse Dashboard..."
 "$TARGET_DIR/start.sh"
 

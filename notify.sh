@@ -177,11 +177,6 @@ fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Event: $event_status ($session_label, folder: $folder_name)" >> "$LOG_FILE"
 
-# Keep-alive: ensure Agent-Pulse web server is alive in background
-if ! curl -s -m 0.15 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
-    /data/data/com.termux/files/home/.agent-pulse/start.sh >/dev/null 2>&1 &
-fi
-
 # AUTO-OPEN AUTOMATION (Triggered only if explicitly toggled ON by user)
 if [ "$is_permission" = true ] && [ "$auto_open_perm" = "true" ]; then
     "$OPEN_SCRIPT" "$notify_id" >/dev/null 2>&1 &
