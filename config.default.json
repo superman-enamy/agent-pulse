@@ -4,8 +4,8 @@
     "host": "127.0.0.1"
   },
   "automation": {
-    "auto_open_on_permission": true,
-    "auto_open_on_complete": true,
+    "auto_open_on_permission": false,
+    "auto_open_on_complete": false,
     "only_open_when_background": true
   },
   "smart_dnd": {

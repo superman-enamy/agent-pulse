@@ -45,9 +45,13 @@ if command -v termux-fix-shebang >/dev/null 2>&1; then
     termux-fix-shebang "$TARGET_DIR"/*.sh "$TARGET_DIR"/server.py 2>/dev/null || true
 fi
 
-# 5. Symlink CLI command to $PREFIX/bin
+# 5. Symlink CLI command to $PREFIX/bin or ~/.local/bin
 echo "🔗 Setting up 'agent-pulse' CLI shortcut..."
 CLI_BIN="$PREFIX/bin/agent-pulse"
+if [ ! -d "$PREFIX/bin" ] || [ ! -w "$PREFIX/bin" ]; then
+    mkdir -p "$HOME/.local/bin"
+    CLI_BIN="$HOME/.local/bin/agent-pulse"
+fi
 cat << 'CLIEOC' > "$CLI_BIN"
 #!/data/data/com.termux/files/usr/bin/bash
 DIR="$HOME/.agent-pulse"
@@ -56,7 +60,14 @@ case "$1" in
     stop) "$DIR/stop.sh" ;;
     restart) "$DIR/stop.sh"; sleep 1; "$DIR/start.sh" ;;
     status) "$DIR/status.sh" ;;
-    open|web|dashboard) termux-open-url "http://localhost:8899" ;;
+    open|web|dashboard)
+        if ! curl -s -m 1 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
+            echo "⚡ Starting Agent-Pulse Web Portal..."
+            "$DIR/start.sh"
+            sleep 0.5
+        fi
+        termux-open-url "http://localhost:8899"
+        ;;
     *)
         echo "Agent-Pulse CLI - Termux Automation Hub"
         echo "Usage: agent-pulse {start|stop|restart|status|open}"
@@ -118,7 +129,19 @@ mkdir -p "$HOME/.agents/skills/agent-pulse"
 cp -f "$TARGET_DIR/skills/agent-pulse/SKILL.md" "$HOME/.agents/skills/agent-pulse/" 2>/dev/null || true
 echo "   ✅ Agent skill installed at ~/.agents/skills/agent-pulse/SKILL.md"
 
-# 9. Start Service
+# 9. Configure keep-alive in ~/.bashrc
+if [ -f "$HOME/.bashrc" ] && ! grep -q "agent-pulse/start.sh" "$HOME/.bashrc"; then
+    cat << 'BASHRC_HOOK' >> "$HOME/.bashrc"
+
+# >>> agent-pulse keep-alive >>>
+if ! curl -s -m 0.2 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
+    [ -x "$HOME/.agent-pulse/start.sh" ] && "$HOME/.agent-pulse/start.sh" >/dev/null 2>&1 &
+fi
+# <<< agent-pulse keep-alive <<<
+BASHRC_HOOK
+fi
+
+# 10. Start Service
 echo "🚀 Starting Agent-Pulse Dashboard..."
 "$TARGET_DIR/start.sh"
 

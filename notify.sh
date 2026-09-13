@@ -14,8 +14,8 @@ get_config() {
 
 # Standalone test modes
 if [ "$mode" = "test_voice" ]; then
-    rate=$(get_config '.tts.rate // 1.0')
-    pitch=$(get_config '.tts.pitch // 1.0')
+    rate=$(get_config 'if .tts.rate != null then .tts.rate else 1.0 end')
+    pitch=$(get_config 'if .tts.pitch != null then .tts.pitch else 1.0 end')
     msg="${2:-Agent Pulse voice test is working successfully}"
     termux-tts-speak -r "$rate" -p "$pitch" "$msg"
     exit 0
@@ -66,17 +66,17 @@ folder_name=$(basename "$(pwd)")
 # 2. Session and folder metadata ready
 
 # 3. Read settings from config.json
-smart_dnd=$(get_config '.smart_dnd.enabled // true')
-silent_toast=$(get_config '.smart_dnd.silent_toast_in_termux // true')
-auto_open_perm=$(get_config '.automation.auto_open_on_permission // true')
-auto_open_comp=$(get_config '.automation.auto_open_on_complete // false')
-tts_enabled=$(get_config '.tts.enabled // true')
-tts_rate=$(get_config '.tts.rate // 1.0')
-tts_pitch=$(get_config '.tts.pitch // 1.0')
-snd_enabled=$(get_config '.notification.sound // true')
-vib_enabled=$(get_config '.notification.vibrate // true')
-led_enabled=$(get_config '.notification.led // true')
-banner_enabled=$(get_config '.notification.terminal_banner // true')
+smart_dnd=$(get_config 'if .smart_dnd.enabled != null then .smart_dnd.enabled else true end')
+silent_toast=$(get_config 'if .smart_dnd.silent_toast_in_termux != null then .smart_dnd.silent_toast_in_termux else true end')
+auto_open_perm=$(get_config 'if .automation.auto_open_on_permission != null then .automation.auto_open_on_permission else false end')
+auto_open_comp=$(get_config 'if .automation.auto_open_on_complete != null then .automation.auto_open_on_complete else false end')
+tts_enabled=$(get_config 'if .tts.enabled != null then .tts.enabled else true end')
+tts_rate=$(get_config 'if .tts.rate != null then .tts.rate else 1.0 end')
+tts_pitch=$(get_config 'if .tts.pitch != null then .tts.pitch else 1.0 end')
+snd_enabled=$(get_config 'if .notification.sound != null then .notification.sound else true end')
+vib_enabled=$(get_config 'if .notification.vibrate != null then .notification.vibrate else true end')
+led_enabled=$(get_config 'if .notification.led != null then .notification.led else true end')
+banner_enabled=$(get_config 'if .notification.terminal_banner != null then .notification.terminal_banner else false end')
 
 vib_comp=$(get_config '.notification.vibrate_pattern_complete // "100,100,100"')
 vib_perm=$(get_config '.notification.vibrate_pattern_permission // "300,150,300,150,300"')
@@ -176,6 +176,11 @@ if [ "$banner_enabled" = "true" ] && [ -n "$cur_tty" ] && [ -c "/dev/$cur_tty" ]
 fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Event: $event_status ($session_label, folder: $folder_name)" >> "$LOG_FILE"
+
+# Keep-alive: ensure Agent-Pulse web server is alive in background
+if ! curl -s -m 0.15 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
+    /data/data/com.termux/files/home/.agent-pulse/start.sh >/dev/null 2>&1 &
+fi
 
 # AUTO-OPEN AUTOMATION (Triggered only if explicitly toggled ON by user)
 if [ "$is_permission" = true ] && [ "$auto_open_perm" = "true" ]; then

@@ -7,7 +7,10 @@ LOG_FILE="$DIR/logs/server.log"
 
 mkdir -p "$DIR/logs"
 
-if curl -s -m 1 http://127.0.0.1:8899/api/status >/dev/null 2>&1; then
+# Keep CPU alive while background server runs
+termux-wake-lock 2>/dev/null || true
+
+if curl -s -m 1 http://127.0.0.1:8899/api/status >/dev/null 2>&1 || pgrep -f "python3.*agent-pulse/server.py" >/dev/null 2>&1; then
     echo "🟢 Agent-Pulse is already running at http://localhost:8899"
     exit 0
 fi

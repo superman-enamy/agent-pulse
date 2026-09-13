@@ -15,4 +15,5 @@ fi
 
 # Fallback: kill by pattern
 pkill -f "python3.*agent-pulse/server.py" 2>/dev/null
-echo "Agent-Pulse is not running."
+termux-wake-unlock 2>/dev/null || true
+echo "Agent-Pulse is stopped."
